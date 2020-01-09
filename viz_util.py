@@ -519,9 +519,19 @@ def draw_xyzwhl(
     # mlab.view(azimuth=180, elevation=70, focalpoint=[ 12.0909996 , -1.04700089, -2.03249991], distance=62.0, figure=fig)
     return fig
 
-
-if __name__ == "__main__":
+def test_main():
+#if __name__ == "__main__":
     pc = np.loadtxt("mayavi/kitti_sample_scan.txt")
     fig = draw_lidar(pc)
+    mlab.savefig("pc_view.jpg", figure=fig)
+    raw_input()
+
+def test01():
+    file_dir = "./data/object/training/velodyne/000000.bin"
+    
+    pc = np.fromfile(file_dir, dtype=np.float32).reshape(-1, 4) # load velodyne data
+    
+    fig = draw_lidar(pc)
+    
     mlab.savefig("pc_view.jpg", figure=fig)
     raw_input()
