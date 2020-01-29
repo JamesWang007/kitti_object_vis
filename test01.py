@@ -520,28 +520,72 @@ def draw_xyzwhl(
     return fig
 
 '''
-def test_main():
-#if __name__ == "__main__":
-    pc = np.loadtxt("mayavi/kitti_sample_scan.txt")
+if __name__ == "__main__":
+    #pc = np.fromfile('data/save/backbone_xyz_pc.bin', dtype=np.float32).reshape(-1,3)
+    #pc = np.fromfile('data/save/000001.bin', dtype=np.float32).reshape(-1, 3)
+    pc = np.fromfile('data/save/pts_input.bin', dtype=np.float32).reshape(-1, 3)
+    pc = np.pad(pc, (0,1), constant_values=(0))
+    pc = np.delete(pc, -1, 0)
+    print(pc.shape)
     fig = draw_lidar(pc)
-    mlab.savefig("pc_view.jpg", figure=fig)
+    #mlab.savefig("backbone_xyz_pc.jpg", figure=fig)
+    mlab.savefig('pts_input.jpg', figure=fig)
     raw_input()
+    mlab.close()
 '''
 
-
-def test01():
-    file_dir = "./data/object/training/velodyne/000000.bin"
-    
-    pc = np.fromfile(file_dir, dtype=np.float32).reshape(-1, 4) # load velodyne data
-    
+if __name__ == "__main__":
+    pc = np.fromfile('./data/save/train_01.bin', dtype=np.float32).reshape(-1, 4)
     fig = draw_lidar(pc)
+    mlab.show()
     
-    mlab.savefig("pc_view.jpg", figure=fig)
+    #mlab.savefig('./data/save/train_01.jpg', figure=fig)
     raw_input()
+    #mlab.close()
 
-    
-def get_pc():
-    #file_dir = "./data/object/training/velodyne/000000.bin"
-    file_dir = './data/save/train_01.bin'
-    
-    return np.fromfile(file_dir, dtype=np.float32).reshape(-1, 4) # load velodyne data
+
+
+
+def draw_lidar_simple(pc, color=None):
+    ''' Draw lidar points. simplest set up. '''
+    fig = mlab.figure(figure=None, bgcolor=(0,0,0), fgcolor=None, engine=None, size=(1600, 1000))
+    if color is None: color = pc[:,2]
+    #draw points
+    mlab.points3d(pc[:,0], pc[:,1], pc[:,2], color, color=None, mode='point', colormap = 'gnuplot', scale_factor=1, figure=fig)
+    #draw origin
+    mlab.points3d(0, 0, 0, color=(1,1,1), mode='sphere', scale_factor=0.2)
+    #draw axis
+    axes=np.array([
+        [2.,0.,0.,0.],
+        [0.,2.,0.,0.],
+        [0.,0.,2.,0.],
+    ],dtype=np.float64)
+    mlab.plot3d([0, axes[0,0]], [0, axes[0,1]], [0, axes[0,2]], color=(1,0,0), tube_radius=None, figure=fig)
+    mlab.plot3d([0, axes[1,0]], [0, axes[1,1]], [0, axes[1,2]], color=(0,1,0), tube_radius=None, figure=fig)
+    mlab.plot3d([0, axes[2,0]], [0, axes[2,1]], [0, axes[2,2]], color=(0,0,1), tube_radius=None, figure=fig)
+    mlab.view(azimuth=180, elevation=70, focalpoint=[ 12.0909996 , -1.04700089, -2.03249991], distance=62.0, figure=fig)
+    return fig
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
