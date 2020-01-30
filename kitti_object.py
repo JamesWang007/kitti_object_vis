@@ -15,6 +15,7 @@ ROOT_DIR = os.path.dirname(BASE_DIR)
 sys.path.append(os.path.join(ROOT_DIR, "mayavi"))
 import kitti_util as utils
 import argparse
+import mayavi.mlab as mlab
 
 try:
     raw_input  # Python 2
@@ -67,7 +68,7 @@ class kitti_object(object):
         img_filename = os.path.join(self.image_dir, "%06d.png" % (idx))
         return utils.load_image(img_filename)
 
-    def get_lidar(self, idx, dtype=np.float64, n_vec=4):
+    def get_lidar(self, idx, dtype=np.float32, n_vec=4):
         assert idx < self.num_samples
         lidar_filename = os.path.join(self.lidar_dir, "%06d.bin" % (idx))
         print(lidar_filename)
@@ -163,10 +164,10 @@ class kitti_object_video(object):
 
 
 def viz_kitti_video():
-    video_path = os.path.join(ROOT_DIR, "dataset/2011_09_26/")
+    video_path = os.path.join("./data/2011_09_26/")
     dataset = kitti_object_video(
-        os.path.join(video_path, "2011_09_26_drive_0023_sync/image_02/data"),
-        os.path.join(video_path, "2011_09_26_drive_0023_sync/velodyne_points/data"),
+        os.path.join(video_path, "2011_09_26_drive_0001_sync/image_02/data"),
+        os.path.join(video_path, "2011_09_26_drive_0001_sync/velodyne_points/data"),
         video_path,
     )
     print(len(dataset))

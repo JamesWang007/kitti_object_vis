@@ -535,48 +535,73 @@ if __name__ == "__main__":
 '''
 
 if __name__ == "__main__":
-    pc = np.fromfile('./data/save/train_01.bin', dtype=np.float32).reshape(-1, 4)
-    fig = draw_lidar(pc)
+    
+    pc = np.fromfile('./data/object/training/velodyne/000002.bin', dtype=np.float32).reshape(-1, 4)
+    #fig=draw_lidar(pc)
+    fig = draw_lidar_simple(pc)
+    '''
+    # add boxes
+    from utils import kitti_utils
+    obj_3d = kitti_utils.get_objects_from_label('./data/save/000003.txt')
+    '''
+    '''
+    #gt_boxes3d = [o.generate_corners3d() for o in obj_3d]
+    A = np.array([[0, 0, 1], \
+                   [-1, 0,0], \
+                   [0,-1,0]])
+    gt_boxes3d_6 = [[*(np.matmul(A, o.pos.T)), o.l, o.w, o.h] for o in obj_3d]
+    '''
+    import kitti_util as util
+    from kitti_object import *
+    
+    dataset = kitti_object('data/object')
+    
+    data_idx = 2
+    pc_velo = dataset.get_lidar(data_idx)[:, 0:4]
+    calib = dataset.get_calibration(data_idx)
+    depth, is_exist = dataset.get_depth(data_idx)
+    img = dataset.get_image(data_idx)
+    img_height, img_width, img_channel = img.shape
+    print(data_idx, "image shape: ", img.shape)
+    print(data_idx, "velo  shape: ", pc_velo.shape)
+    print(data_idx, "depth shape: ", depth.shape)
+    objects = dataset.get_label_objects(data_idx)
+    
+    for obj in objects:
+        if obj.type == "DontCare":
+            continue
+        # Draw 3d bounding box
+        box3d_pts_2d, box3d_pts_3d = utils.compute_box_3d(obj, calib.P)
+        box3d_pts_3d_velo = calib.project_rect_to_velo(box3d_pts_3d)
+        print("box3d_pts_3d_velo:")
+        print(box3d_pts_3d_velo)
+
+        draw_gt_boxes3d([box3d_pts_3d_velo], fig=None, color=(0, 1, 0), label=obj.type)
+    '''
+    show_lidar_with_depth(
+                pc_velo,
+                objects,
+                calib,
+                fig,
+                False, #args.img_FOV
+                img_width,
+                img_height,
+                None,
+                depth,
+                img,
+                constraint_box=False,
+                save='data/save',
+                pc_label = False,
+            )
+    '''
+    
+    #fig = draw_xyzwhl(gt_boxes3d_6, fig = fig)
+    
     mlab.show()
     
     #mlab.savefig('./data/save/train_01.jpg', figure=fig)
     raw_input()
     #mlab.close()
-
-
-
-
-def draw_lidar_simple(pc, color=None):
-    ''' Draw lidar points. simplest set up. '''
-    fig = mlab.figure(figure=None, bgcolor=(0,0,0), fgcolor=None, engine=None, size=(1600, 1000))
-    if color is None: color = pc[:,2]
-    #draw points
-    mlab.points3d(pc[:,0], pc[:,1], pc[:,2], color, color=None, mode='point', colormap = 'gnuplot', scale_factor=1, figure=fig)
-    #draw origin
-    mlab.points3d(0, 0, 0, color=(1,1,1), mode='sphere', scale_factor=0.2)
-    #draw axis
-    axes=np.array([
-        [2.,0.,0.,0.],
-        [0.,2.,0.,0.],
-        [0.,0.,2.,0.],
-    ],dtype=np.float64)
-    mlab.plot3d([0, axes[0,0]], [0, axes[0,1]], [0, axes[0,2]], color=(1,0,0), tube_radius=None, figure=fig)
-    mlab.plot3d([0, axes[1,0]], [0, axes[1,1]], [0, axes[1,2]], color=(0,1,0), tube_radius=None, figure=fig)
-    mlab.plot3d([0, axes[2,0]], [0, axes[2,1]], [0, axes[2,2]], color=(0,0,1), tube_radius=None, figure=fig)
-    mlab.view(azimuth=180, elevation=70, focalpoint=[ 12.0909996 , -1.04700089, -2.03249991], distance=62.0, figure=fig)
-    return fig
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
