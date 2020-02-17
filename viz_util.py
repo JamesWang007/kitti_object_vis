@@ -123,6 +123,7 @@ def draw_lidar_simple(pc, color=None):
         [0, axes[0, 1]],
         [0, axes[0, 2]],
         color=(1, 0, 0),
+        line_width=2.0,
         tube_radius=None,
         figure=fig,
     )
@@ -536,8 +537,8 @@ def test01():
     
     fig = draw_lidar(pc)
     
-    mlab.savefig("pc_view.jpg", figure=fig)
-    raw_input()
+    #mlab.savefig("pc_view.jpg", figure=fig)
+    #raw_input()
 
     
 def get_pc():
