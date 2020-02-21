@@ -18,7 +18,6 @@ from pointnet2_msg import Pointnet2MSG as pointnet2_msg
 
 import kitti_utils
 
-'''
 import mayavi.mlab as mlab
 
 # pts_mode='sphere'
@@ -183,7 +182,6 @@ def draw_lidar(
         figure=fig,
     )
     return fig
-'''
 
 
 
@@ -311,8 +309,17 @@ def load_res(filename):
     return res.reshape(-1,4).view()
 
 
-if __name__== "__main__":
+if __name__=="__main__":
     
+    pc = np.fromfile('mycode/data/train_03.bin', dtype=np.float32).reshape(-1,4)
+    res = np.fromfile('res_03.txt', dtype=np.float32).reshape(-1,4)
+    
+    
+    
+    
+    
+    
+'''
     FG_THRESH = 0.3
     
     # load model
@@ -331,12 +338,13 @@ if __name__== "__main__":
     # load data
     pc = np.fromfile('mycode/data/train_03.bin', dtype=np.float32).reshape(-1,4)
     choice, pc_for_det = getdata(pc)
-    pc_for_det = torch.from_numpy(pc_for_det.reshape(1,-1,3)).cuda(non_blocking=True).float()
-        
+    pc_for_det = torch.from_numpy(pc_for_det.reshape(1,-1,3)).float()
+    #pc_for_det = torch.from_numpy(pc_for_det.reshape(1,-1,3)).cuda(non_blocking=True).float()
+    
     with torch.no_grad():
         pred_cls = model(pc_for_det)
     pred_class = (torch.sigmoid(pred_cls) > FG_THRESH).cpu().numpy()[0]  
-    print("===> detection done")
+    print("===> detection done")    
     
     
     pts_rect = pc[choice, 0:3]
@@ -348,3 +356,4 @@ if __name__== "__main__":
     print(res)
         
     print("glk")
+'''
